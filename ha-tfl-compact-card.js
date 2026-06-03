@@ -170,11 +170,21 @@ class TfLCompactCard extends HTMLElement {
         }
         .compact-card {
           font-family: var(--paper-font-body1_-_font-family, system-ui, -apple-system, sans-serif);
-          background: var(--ha-card-background, var(--card-background-color, #fff));
+          background: #fff;
+          color: #333333;
           border-radius: var(--ha-card-border-radius, 12px);
           border: var(--ha-card-border, 1px solid var(--divider-color, #e0e0e0));
           box-shadow: var(--ha-card-box-shadow, none);
           overflow: hidden;
+        }
+        @media (prefers-color-scheme: dark) {
+          .compact-card {
+            background: #000000;
+            color: #ffffff;
+            --primary-text-color: #ffffff;
+            --secondary-text-color: #bbbbbb;
+            --divider-color: #333333;
+          }
         }
 
         /* Split banner row */
