@@ -6,13 +6,7 @@ Perfect for small dashboard tiles where you just need a quick glance at your com
 
 ## Preview
 
-```
-┌──────────────┬──────────────┐
-│   Jubilee    │ Metropolitan │  ← official line colours
-├──────────────┼──────────────┤
-│ Good service │ Good service │  ← disruptions show in red
-└──────────────┴──────────────┘
-```
+![TfL Compact Status Card](screenshot.png)
 
 ## Features
 
