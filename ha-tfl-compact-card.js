@@ -239,6 +239,20 @@ class TfLCompactCard extends HTMLElement {
         const hoverClass = hasReason ? 'interactive' : '';
         const expandedClass = isExpanded ? 'expanded' : '';
 
+        let reasonsHtml = '';
+        if (hasReason) {
+          const uniqueReasons = [];
+          for (const s of line.statuses) {
+            if (!s.reason) continue;
+            const cleaned = s.reason.trim();
+            const norm = cleaned.toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+            if (!uniqueReasons.some(r => r.toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '') === norm)) {
+              uniqueReasons.push(cleaned);
+            }
+          }
+          reasonsHtml = uniqueReasons.map(r => `<div class="tfl-disruption-reason">${r}</div>`).join('');
+        }
+
         rows.push(`
           <div class="tfl-row ${expandedClass} ${hoverClass}" data-line-id="${line.id}">
             <div class="tfl-row-header">
@@ -259,7 +273,7 @@ class TfLCompactCard extends HTMLElement {
             ${hasReason ? `
               <div class="tfl-row-details" style="max-height: ${isExpanded ? '500px' : '0'};">
                 <div class="tfl-details-content">
-                  ${line.statuses.map(s => s.reason ? `<div class="tfl-disruption-reason">${s.reason}</div>` : '').join('')}
+                  ${reasonsHtml}
                 </div>
               </div>
             ` : ''}
