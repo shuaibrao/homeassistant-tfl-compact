@@ -123,6 +123,17 @@ class TfLCompactCard extends HTMLElement {
           ? [{ severityText: 'Good service', reason: '' }] 
           : activeStatuses;
 
+        // Extract unique, normalized reasons
+        const uniqueReasons = [];
+        for (const s of statuses) {
+          if (!s.reason) continue;
+          const cleaned = s.reason.trim();
+          const norm = cleaned.toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
+          if (!uniqueReasons.some(r => r.toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '') === norm)) {
+            uniqueReasons.push(cleaned);
+          }
+        }
+
         return {
           id: line.id,
           name: meta.name || line.name,
@@ -130,7 +141,8 @@ class TfLCompactCard extends HTMLElement {
           color: meta.color,
           textColor: meta.text_color || '#FFFFFF',
           isGoodService,
-          statuses
+          statuses,
+          reasons: uniqueReasons
         };
       });
 
@@ -142,7 +154,7 @@ class TfLCompactCard extends HTMLElement {
         statuses[line.id] = {
           isGood: line.isGoodService,
           text: line.statuses.map(s => s.severityText).join(', '),
-          reason: line.statuses.map(s => s.reason).filter(Boolean).join(' ')
+          reason: line.reasons.join(' ')
         };
       }
 
@@ -235,23 +247,11 @@ class TfLCompactCard extends HTMLElement {
       // Render disrupted lines
       for (const line of disrupted) {
         const isExpanded = this._expandedLines.has(line.id);
-        const hasReason = line.statuses.some(s => s.reason);
+        const hasReason = line.reasons.length > 0;
         const hoverClass = hasReason ? 'interactive' : '';
         const expandedClass = isExpanded ? 'expanded' : '';
 
-        let reasonsHtml = '';
-        if (hasReason) {
-          const uniqueReasons = [];
-          for (const s of line.statuses) {
-            if (!s.reason) continue;
-            const cleaned = s.reason.trim();
-            const norm = cleaned.toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '');
-            if (!uniqueReasons.some(r => r.toLowerCase().replace(/\s+/g, ' ').replace(/\.$/, '') === norm)) {
-              uniqueReasons.push(cleaned);
-            }
-          }
-          reasonsHtml = uniqueReasons.map(r => `<div class="tfl-disruption-reason">${r}</div>`).join('');
-        }
+        const reasonsHtml = line.reasons.map(r => `<div class="tfl-disruption-reason">${r}</div>`).join('');
 
         rows.push(`
           <div class="tfl-row ${expandedClass} ${hoverClass}" data-line-id="${line.id}">
